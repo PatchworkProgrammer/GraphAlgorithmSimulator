@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+
+<head>
+
+    <title>Try1</title>
+
+    <link rel="stylesheet" href="main.css">
+</head>
+
+<body>
+    <div class="main">
+        <button id='newNodeBtn'>
+                add Button
+            </button>
+
+
+
+        <div id="edgeList">
+
+        </div>
+
+        <p>
+            Try Pasting<br> 5 5<br> 1 2 2<br> 1 5 100<br> 2 3 2<br> 5 4 1<br> 4 3 100<br> print('hello')
+        </p>
+
+
+
+        <textarea id="graph_input" rows="4" cols="50"></textarea>
+
+        <button id="load_graph_btn">
+                Load Graph
+            </button>
+
+        <button onclick="printAdjList()">AdjList Console Log</button>
+
+        <div id='popup' class="popup">
+            <input type="text" id="weightInput" value="1">
+            <button id='confirmBtn'>COnfirm</button>
+            <button>Cancel</button>
+        </div>
+
+
+
+
+        <div class="canvas" id="canvas">
+        </div>
+    </div>
+
+
+
+    <textarea id="code_input" rows="25" cols="100" value="print('only python for now')">print('only python for now')</textarea>
+    <button onclick="runCode()">Run Code</button>
+
+    <p id='console_output'>
+
+    </p>
+
+
+    <script src="jsplumb.bundle.js">
+    </script>
+
+    <script src="graph.js">
+    </script>
+
+</body>
+
+</html>

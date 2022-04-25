@@ -1,0 +1,36 @@
+.node {
+
+    border-radius: 50%;
+    position:absolute;
+    width: 100px;
+    height: 100px;
+    background: yellow;
+    border: 3px solid red;
+   
+    
+}
+
+.popup {
+   
+    border: 3px solid black;
+    width: fit-content;
+   
+}
+
+.custom_overlay {
+    font-size: large;
+    z-index: 5;
+  }
+  
+.infected_node {
+    
+    background: rgb(0, 0, 0);
+    
+}
+
+.canvas{
+    position: absolute;
+}
+
+.dragActive { border:2px dotted orange; }
+.dropHover { border:1px dotted red; }
