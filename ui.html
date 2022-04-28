@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Graph Algorithm Simulator</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+		<script
+			src="./vendors/codemirror-5.65.3/lib/codemirror.js"
+			defer
+		></script>
+		<link
+			rel="stylesheet"
+			href="./vendors/codemirror-5.65.3/lib/codemirror.css"
+		/>
+		<script
+			src="./vendors/codemirror-5.65.3/mode/javascript/javascript.js"
+			defer
+		></script>
+
+		<link rel="stylesheet" href="./resources/css/main.css" />
+		<script src="./resources/js/UI.js" defer></script>
+	</head>
+	<body>
+		<div class="main">
+			<div class="left">
+				<div class="code-options">
+					<select name="language" id="language">
+						<option value="C++">C++</option>
+						<option value="Java">Java</option>
+						<option value="Python">Python</option>
+						<option value="Javascript">Javascript</option>
+					</select>
+				</div>
+				<div class="code-area"></div>
+				<div class="code-io">
+					<div class="code-input">
+						<textarea>
+
+						</textarea>
+					</div>
+					<div class="code-output">
+						<textarea>
+
+						</textarea>
+					</div>
+				</div>
+			</div>
+			<div class="right">
+				<div class="graph-area">
+					<canvas> </canvas>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
