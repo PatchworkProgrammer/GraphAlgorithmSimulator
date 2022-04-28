@@ -1,36 +1,94 @@
 .node {
-
     border-radius: 50%;
-    position:absolute;
+    position: absolute;
     width: 100px;
     height: 100px;
-    background: yellow;
-    border: 3px solid red;
-   
+    background: rgb(255, 255, 255);
+    z-index: 10;
+    border: 5px solid rgb(0, 0, 0);
     
 }
 
+.node_completed{
+    border-radius: 50%;
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background: rgb(255, 255, 255);
+    z-index: 10;
+    border: 5px solid rgb(17, 134, 13);
+}
+
+.node_frontier{
+    border-radius: 50%;
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background: rgb(255, 255, 255);
+    z-index: 10;
+    border: 5px solid rgb(204, 170, 0);
+}
+
+
+
+
+.flex-container{
+    display: flex;
+    margin-top: -9px;
+    width: 100px;
+}
+
+.flex-child{
+    flex:1;
+}
+
+.nodeSource{
+    margin-top: 50px;
+    margin-left: 3px;
+    margin-right: 8px;
+    height: 39px;
+    border-radius: 50%;
+    background-color: rgb(117, 135, 192);
+    
+}
 .popup {
-   
     border: 3px solid black;
     width: fit-content;
+}
+
+.node_info{
+    border: 2px solid black;
+    border-radius: 20%;
+    margin: 5px; 
+    padding: 5px;
+    background-color: white;
    
 }
-
 .custom_overlay {
-    font-size: large;
+    font-size: larger;
     z-index: 5;
-  }
-  
+    color: white;
+    border-radius: 10%;
+    background-color: black;
+}
+
 .infected_node {
-    
     background: rgb(0, 0, 0);
-    
 }
 
-.canvas{
+.canvas {
     position: absolute;
+    left: 55%;
+    top: 5px;
+    width: 670px;
+    height: 700px;
+    border: 3px solid black;
 }
 
-.dragActive { border:2px dotted orange; }
-.dropHover { border:1px dotted red; }
+.dragActive {
+    border: 2px dotted rgb(255, 166, 0);
+}
+
+.dropHover {
+    border: 1px dotted red;
+}
