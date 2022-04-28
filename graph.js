@@ -2,12 +2,13 @@ var node_count = -1;
 var left_offset = 100;
 var top_offset = 100;
 var adjList = [];
-
+var connector_list =[];
 var src = 0;
+
 
 // (node, parent, key/weight)
 
-var graph_states =[
+var graph_states = [
     [ [0, -1, 0.0], [1, -1, 10000], [2, -1, 10000], [3, -1, 10000], [4, -1, 10000],  ],
     [ [1, 0, 10.0], [4, -1, 10000], [2, -1, 10000], [3, -1, 10000],  ],
     [ [2, 0, 5.0], [4, -1, 10000], [1, 0, 10.0], [3, -1, 10000],  ],
@@ -27,7 +28,7 @@ var edgeDiv = document.getElementById('edgeList')
 
 runCode = async function() {
     code_input = "[" + document.getElementById('code_input').value + "]"
-    console.log(code_input)
+   
     response_data =
         fetch('https://emkc.org/api/v2/piston/execute', {
             method: 'POST',
@@ -43,13 +44,39 @@ runCode = async function() {
         })
         .then(res => res.json())
         .then(data => {
-            console.log(data)
+          
             document.getElementById('console_output').innerHTML = data['run']['stdout']
         })
 
 
 }
 
+getEdgeWeight = function(fromIdx, toIdx){
+    weight = -1;
+
+    for (var i = 0; i < adjList[fromIdx].length; i++) {
+        if (adjList[fromIdx][i][0] == toIdx) {
+            weight = adjList[fromIdx][i][1];
+            break;
+        }
+    }
+
+    return weight;
+}
+
+
+findConnectorByEndpoints = function(fromIdx, toIdx){
+   
+
+    for (var i=0; i<connector_list.length;i++){
+      
+        if ( parseInt(connector_list[i].sourceId.slice(4))==fromIdx &&  parseInt(connector_list[i].targetId.slice(4))==toIdx){
+            return connector_list[i];
+        }
+    }
+
+    return null;
+}
 EdgeAlreadyExists = function(fromIdx,toIdx){
 
     for (var i = 0; i < adjList[fromIdx].length; i++) {
@@ -63,11 +90,13 @@ EdgeAlreadyExists = function(fromIdx,toIdx){
 
 printAdjList = function() {
     console.log("called printAdjList")
+   
     for (var i = 0; i < adjList.length; i++) {
         console.log(adjList[i]);
     }
 
 }
+
 
 updateEdges = function(conn, remove) {
 
@@ -78,26 +107,17 @@ updateEdges = function(conn, remove) {
     if (!remove) {
       
 
-        console.log(conn.sourceId, conn.targetId)
-
         //Getting weight by referring to adjList
-        weight = -1;
+        weight = getEdgeWeight(fromIdx, toIdx);
 
-        for (var i = 0; i < adjList[fromIdx].length; i++) {
-            if (adjList[fromIdx][i][0] == toIdx) {
-                weight = adjList[fromIdx][i][1];
-                break;
-            }
-        }
-
-
+        conn.setType("unknown");
         conn.addOverlay({
             type: "Label",
             options: { label: weight, location: 0.5, cssClass: 'custom_overlay' }
         });
 
         conn.addOverlay({ type: "PlainArrow", options: { width:10, length:25, location: 1 } });
-
+       
 
     } else {
         
@@ -137,44 +157,82 @@ updateGraphInfo = function(){
 
     var stillInQ = new Array(adjList.length).fill(false);
     
+
+
+    //SETS THE NODE_INFO
     for (var i=0; i < graph_states[current_state].length ;i++){
-        node_id = 'node'+graph_states[current_state][i][0];
+
+        nodeIdx = graph_states[current_state][i][0];
+        node_id = 'node'+nodeIdx;
         
         
         stillInQ[graph_states[current_state][i][0]] = true;
 
-        parent_id = graph_states[current_state][i][1];
+        parentIdx = graph_states[current_state][i][1];
         weight = graph_states[current_state][i][2];
 
         if (weight == 10000)
             weight = 'inf'
+    
         node = document.getElementById(node_id);
         
        
-        node.children[0].children[0].children[1].innerHTML = 'P:'+parent_id;
+        node.children[0].children[0].children[1].innerHTML = 'P:'+parentIdx;
         node.children[0].children[0].children[2].innerHTML = 'W:'+weight;
 
    
     }
 
+
+
+    //FIGURES OUT WHICH ELEMENTS WERE NOT IN QUEUE AND CHANGES THE COLORS OF NODES AND EDGES
     for (var i=0; i < stillInQ.length ;i++){
 
         node = document.getElementById('node'+i);
-        if (stillInQ[i]){
-            console.log(i,' is still in queue');
-            weight = node.children[0].children[0].children[2].innerHTML;
-           
+        node_weight = node.children[0].children[0].children[2].innerHTML;
+        nodeIdx = i;
+        parentIdx = parseInt(node.children[0].children[0].children[1].innerHTML.slice(2));
 
-            if (weight.localeCompare('W:inf')!=0){
-              
+        if (stillInQ[i]){
+
+            
+     
+            if (node_weight.localeCompare('W:inf')!=0){
                 node.classList.add('node_frontier');
+
+
+                //SET EDGE COLOR
+                if (i!=0){
+                    conn = findConnectorByEndpoints(parentIdx, nodeIdx);
+                    conn.setType("considered");
+
+                    weight = getEdgeWeight(parentIdx,nodeIdx);
+                    conn.addOverlay({
+                        type: "Label",
+                        options: { label: weight, location: 0.5, cssClass: 'custom_overlay' }
+                    });
+                    conn.addOverlay({ type: "PlainArrow", options: { width:10, length:25, location: 1 } });
+                    window.j.repaintEverything();
+                }
+    
             }
         }
-        else{
-            console.log(i,' is not in queue');
+        else{ 
             node.classList.remove('node_frontier');
             node.classList.add('node_completed');
-            
+
+            //SET EDGE COLOR
+            if(i!=0){
+                conn = findConnectorByEndpoints(parentIdx, nodeIdx);
+                conn.setType("final");
+                weight = getEdgeWeight(parentIdx,nodeIdx);
+                conn.addOverlay({
+                    type: "Label",
+                    options: { label: weight, location: 0.5, cssClass: 'custom_overlay' }
+                });
+                conn.addOverlay({ type: "PlainArrow", options: { width:10, length:25, location: 1 } });
+                window.j.repaintEverything();
+            }
         }
     }
 
@@ -229,7 +287,6 @@ jsPlumbBrowserUI.ready(function() {
 
     var instance = window.j = jsPlumbBrowserUI.newInstance({
         dragOptions: { cursor: 'pointer', zIndex: 2000 },
-        PaintStyle: {strokeStyle:'#0dd', lineWidth:2},
         endpointHoverStyle: { fill: "orange" },
         hoverPaintStyle: { stroke: "orange" },
         anchors: ["Continuous", "Continuous"],
@@ -239,6 +296,27 @@ jsPlumbBrowserUI.ready(function() {
         container: canvas
     });
 
+    
+
+
+    //DIFFERENT CONNECTION COLORS
+    instance.registerConnectionTypes({
+        "unknown": {
+          paintStyle:{ stroke:"rgb(65, 65, 100)", strokeWidth:3  },
+          hoverPaintStyle:{ stroke:"rgb(35, 35, 100)", strokeWidth:4 }
+        },
+        "considered":{
+          paintStyle:{ stroke:" rgb(204, 170, 0)", strokeWidth:3 },
+          hoverPaintStyle:{ strokeWidth: 4, stroke:" rgb(255, 220, 30)" },
+        },
+        "final":{
+            paintStyle:{ stroke:"rgb(17, 134, 13)", strokeWidth:3 },
+            hoverPaintStyle:{ strokeWidth: 4, stroke:"rgb(17, 200, 13)" },
+          }	
+
+        
+      });
+          
 
 
  
@@ -265,7 +343,6 @@ jsPlumbBrowserUI.ready(function() {
             toIdx = parseInt(params.targetId.slice(4));
             weight = parseInt(document.getElementById('weightInput').value);
 
-            console.log(fromIdx, toIdx, weight);
 
             if ( EdgeAlreadyExists(fromIdx,toIdx) )
                 return false;
@@ -279,6 +356,8 @@ jsPlumbBrowserUI.ready(function() {
 
     
     //WICHTIG: stuff that adds to JSPLUMB canvas needs to be bound inside Jsplumb instance 
+    
+    
 
     var addButton = document.getElementById('newNodeBtn');
     instance.on(addButton, "click", function(e) {
@@ -407,18 +486,14 @@ jsPlumbBrowserUI.ready(function() {
 
 
             
-            // console.log(fromNode, toNode);
-            instance.connect({source:fromNode, target:toNode, endpoint :"Blank" });
-
+            
+            var conn = instance.connect({source:fromNode, target:toNode, endpoint :"Blank" });
+            connector_list.push(conn);
         }
-
-
 
     });
 
     instance.setSuspendDrawing(false, true);
-
-
 
 });
 
