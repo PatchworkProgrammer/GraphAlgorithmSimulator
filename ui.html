@@ -7,31 +7,37 @@
 		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
 
 		<script
-			src="./vendors/codemirror-5.65.3/lib/codemirror.js"
+			src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.3/codemirror.min.js"
 			defer
 		></script>
 		<link
 			rel="stylesheet"
-			href="./vendors/codemirror-5.65.3/lib/codemirror.css"
+			href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.3/codemirror.min.css"
 		/>
 		<script
-			src="./vendors/codemirror-5.65.3/mode/javascript/javascript.js"
+			src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.3/mode/python/python.min.js"
+			defer
+		></script>
+		<script
+			src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.3/mode/clike/clike.min.js"
 			defer
 		></script>
 
-		<link rel="stylesheet" href="./resources/css/main.css" />
+		<link rel="stylesheet" href="./resources/css/UI.css" />
 		<script src="./resources/js/UI.js" defer></script>
+
+		<script src="./resources/js/code.js" defer></script>
 	</head>
 	<body>
 		<div class="main">
 			<div class="left">
 				<div class="code-options">
 					<select name="language" id="language">
-						<option value="C++">C++</option>
-						<option value="Java">Java</option>
-						<option value="Python">Python</option>
-						<option value="Javascript">Javascript</option>
+						<option value="python">Python</option>
+						<option value="c++">C++</option>
+						<option value="java">Java</option>
 					</select>
+					<button type="button" id="run-code">Run Code</button>
 				</div>
 				<div class="code-area"></div>
 				<div class="code-io">
@@ -41,7 +47,7 @@
 						</textarea>
 					</div>
 					<div class="code-output">
-						<textarea>
+						<textarea readonly>
 
 						</textarea>
 					</div>

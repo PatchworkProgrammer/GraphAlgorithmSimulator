@@ -1,6 +1,11 @@
 const codeAreaDiv = document.querySelector("div.code-area");
+let codeMirror;
 
-let codeMirror = CodeMirror(codeAreaDiv, {
-	value: "function myScript() {return 100; }\n",
-	mode: "javascript",
+/**
+ * @param {string} lang
+ * @param {string} defaultCode
+ */
+codeAreaDiv.replaceChildren();
+codeMirror = CodeMirror(codeAreaDiv, {
+	mode: "python",
 });
