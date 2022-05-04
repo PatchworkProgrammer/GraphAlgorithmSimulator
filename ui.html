@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Graph Algorithm Simulator</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.3/codemirror.min.js" defer></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.3/codemirror.min.css" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.3/mode/python/python.min.js" defer></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.3/mode/clike/clike.min.js" defer></script>
+	<link rel="stylesheet" href="./resources/css/main.css" />
+	<link rel="stylesheet" href="./resources/css/UI.css" />
+	<script src="./resources/js/UI.js" defer></script>
+
+	<script src="./resources/js/code.js" defer></script>
+	<script src="./vendors/jsplumb.bundle.js">
+	</script>
+
+	<script src="./resources/js/graph.js">
+	</script>
+
+</head>
+
+<body>
+	<div class="main">
+		<div class="left">
+			<div class="code-options">
+				<select name="language" id="language">
+					<option value="python">Python</option>
+					<option value="c++">C++</option>
+					<option value="java">Java</option>
+				</select>
+				<button type="button" id="run-code" >Run Code</button>
+			</div>
+			<div class="code-area">
+
+			</div>
+
+			<div class="code-io">
+				<div class="code-input">
+
+
+
+					<textarea id="console_input">5 10
+0 1 10
+0 2 5
+1 2 2
+1 3 1
+2 1 3
+2 4 2
+2 3 9
+3 4 4
+4 3 6
+4 0 7
+0 4	</textarea>
+
+					<button id="load_graph_btn">Load Graph</button>
+					<button onclick="printAdjList()">AdjList Console Log</button>
+
+
+				</div>
+				<div class="code-output">
+					<textarea readonly>
+
+						</textarea>
+				</div>
+			</div>
+		</div>
+		<div class="right">
+
+
+			<div class="graph-area">
+				<button onclick="updateGraphInfo()">STEP</button>
+				<button id='newNodeBtn'> add Button </button>
+				<div id="edgeList"> </div>
+				<p>
+					RUN CODE<br>
+					LOAD GRAPH<br>
+					PRESS STEP
+				</p>
+
+				<div id='popup' class="popup">
+					<input type="text" id="weightInput" value="1">
+					<button id='confirmBtn'>New Edge Weight</button>
+				</div>
+
+				<div class="canvas" id="canvas">
+
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

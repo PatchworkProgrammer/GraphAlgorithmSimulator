@@ -1,0 +1,69 @@
+
+html, body {
+    height: 98%;
+    border: 1px solid black;
+}
+
+.main {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+    border: 1px solid black;
+}
+
+.left {
+    float: left;
+    flex-grow: 1;
+    height: 100%;
+    border: 1px solid black;
+}
+
+.right {
+    float: right;
+    width: 50%;
+    height: 100%;
+    border: 1px solid black;
+
+}
+
+.code-options {
+    justify-content: flex-start;
+    border: 1px solid black;
+}
+
+
+.code-area {
+    height: 80%;
+    border: 1px solid black;
+}
+
+.code-io {
+    display: flex;
+    flex-direction: row;
+    height: 15%;
+    border: 1px solid black;
+}
+
+.code-input {
+    justify-content: flex-start;
+    border: 1px solid black;
+    width: 48%;
+}
+
+.code-output {
+    justify-content: flex-end;
+    border: 1px solid black;
+    width: 48%;
+}
+
+textarea {
+    width: 100%;
+    height: 100%;
+    border: 1px solid black;
+}
+
+.CodeMirror {
+    height: 100%;
+    border: 1px solid black;
+}
