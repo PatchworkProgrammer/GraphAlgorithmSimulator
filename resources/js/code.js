@@ -25,9 +25,9 @@ public class SampleDijkstra {
             list.addEdges(u, v, w);
         }
 
-        int source = scanner.nextInt();
-        int destination = scanner.nextInt();
-        var solution = Dijkstra.Dijkstra_Algo(list, source, destination);
+        int source = 0;
+      
+        Dijkstra.Dijkstra_Algo(list, source);
     }
 }
 
@@ -477,7 +477,7 @@ class Dijkstra {
         }
     }
 
-    public static ArrayList<vertexClass> Dijkstra_Algo(myAdjList list, int source, int dest) {
+    public static void Dijkstra_Algo(myAdjList list, int source) {
 
         vertexClass[] vertices_arr = initialize_single_src(list, source);
 
@@ -511,23 +511,6 @@ class Dijkstra {
         System.out.print("[]]");
         System.out.println();
 
-        ArrayList<vertexClass> solution = new ArrayList<>();
-
-        if (vertices_arr[dest].getKey() == INFINITY) {
-            System.out.println("No way to reach " + dest + " from " + source);
-            return solution;
-        }
-        System.out.println("Shortest path cost: " + vertices_arr[dest].getKey());
-        printPath(source, dest, vertices_arr);
-        System.out.println();
-
-
-        for (vertexClass vertex : vertices_arr) {
-            if (vertex.getParent() != NULL)
-                solution.add(vertex);
-
-        }
-        return solution;
 
 
     }
@@ -562,7 +545,6 @@ langSelection.addEventListener("change", (event) => {
 		codeMirror.setOption("mode", "text/x-c++src");
 	} else {
 		codeMirror.setOption("mode", "text/x-java");
-		
 		codeMirror.setValue(default_code);
 	}
 });

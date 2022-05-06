@@ -6,6 +6,8 @@ var connector_list = [];
 var src = 0;
 var graph_states = [];
 var current_state = 0;
+var directed_bool = null;
+var weighted_bool = null;
 
 
 function getEdgeWeight(fromIdx, toIdx) {
@@ -48,6 +50,15 @@ function EdgeAlreadyExists(fromIdx, toIdx) {
             return true;
         }
     }
+
+    if( !directed_bool ) {
+        for (var i = 0; i < adjList[toIdx].length; i++) {
+            // 3d array ?
+            if (adjList[toIdx][i][0] == toIdx) {
+                return true;
+            }
+        }
+    }
     return false;
 }
 
@@ -57,11 +68,39 @@ function printAdjList() {
         console.log(adjList[i]);
     }
 
-    var s = "[[[0,-1,0.0],[1,-1,10000.0],[2,-1,10000.0],[3,-1,10000.0],[4,-1,10000.0]],[[1,0,10.0],[4,-1,10000.0],[2,-1,10000.0],[3,-1,10000.0]],[[2,0,5.0],[4,-1,10000.0],[1,0,10.0],[3,-1,10000.0]],[[1,2,8.0],[4,-1,10000.0],[3,-1,10000.0]],[[4,2,7.0],[1,2,8.0],[3,-1,10000.0]],[[4,2,7.0],[1,2,8.0],[3,2,14.0]],[[1,2,8.0],[3,4,13.0]],[[1,2,8.0],[3,4,13.0]],[[3,4,13.0]],[[3,1,9.0]],[]]"
-    console.log(s)
-    var k = JSON.parse(s)
-    console.log(k)
 }
+
+function removeFromAdjList(fromIdx, toIdx){
+
+    var idx2 = -1;
+    for (var i = 0; i < adjList[fromIdx].length; i++) {
+        if (adjList[fromIdx][i][0] == toIdx) {
+            idx2 = i;
+            break;
+        }
+    }
+
+    if (idx2 != -1) {
+        adjList[fromIdx].splice(idx2, 1);
+    }
+
+
+    if (!directed_bool){
+
+        var idx2 = -1;
+        for (var i = 0; i < adjList[toIdx].length; i++) {
+            if (adjList[toIdx][i][0] == fromIdx) {
+                idx2 = i;
+                break;
+            }
+        }
+
+        if (idx2 != -1) {
+            adjList[toIdx].splice(idx2, 1);
+        }
+    }
+}
+
 
 /**
  * Updates the adj list printed on the page, when edges are removed or addded + Adds Overlay (important) + Adds a display for edges (legacy)
@@ -74,36 +113,51 @@ function updateEdges(conn, remove) {
 
     fromIdx = parseInt(conn.sourceId.slice(4));
     toIdx = parseInt(conn.targetId.slice(4));
-
-
+   
 
     if (!remove) {
 
 
         //Getting weight by referring to adjList
-
-
         weight = getEdgeWeight(fromIdx, toIdx);
 
-        new_entry = fromIdx + " " + toIdx + " " + weight
-
+        // UPDATING CONSOLE INPUT IF GRAPH CHANGED VIA UI
+        
         input = document.getElementById("console_input").value
+        
 
-        if (input.indexOf(new_entry) == -1 && weight) {
+        if (weighted_bool){
+            new_entry = fromIdx + " " + toIdx + " " + weight
+            if (input.indexOf(new_entry) == -1) {
             first_line = input.split('\n')[0]
             node_num = parseInt(first_line.split(' ')[0])
             edge_num = parseInt(first_line.split(' ')[1]) + 1  //edge added
-
             document.getElementById("console_input").value = input.replace(first_line, node_num + " " + edge_num + "\n" + new_entry)
+            }
         }
 
 
-        conn.addOverlay({
-            type: "Label",
-            options: { label: weight, location: 0.5, cssClass: 'custom_overlay' }
-        });
+        else{
+            new_entry = fromIdx + " " + toIdx
+            if (input.indexOf(new_entry) == -1) {
+            first_line = input.split('\n')[0]
+            node_num = parseInt(first_line.split(' ')[0])
+            edge_num = parseInt(first_line.split(' ')[1]) + 1  //edge added
+            document.getElementById("console_input").value = input.replace(first_line, node_num + " " + edge_num + "\n" + new_entry)
+            }
 
-        conn.addOverlay({ type: "PlainArrow", options: { width: 10, length: 25, location: 1 } });
+
+        }
+        
+
+        if (weighted_bool) 
+            conn.addOverlay({
+                type: "Label",
+                options: { label: weight, location: 0.5, cssClass: 'custom_overlay' }
+            });
+
+        if (directed_bool)
+            conn.addOverlay({ type: "PlainArrow", options: { width: 15, length: 25, location: 1 } });
 
 
     } else {
@@ -117,34 +171,36 @@ function updateEdges(conn, remove) {
         edge_num = parseInt(first_line.split(' ')[1]) - 1  //edge removed
 
         document.getElementById("console_input").value = input.replace(first_line, node_num + " " + edge_num)
-        document.getElementById("console_input").value = document.getElementById("console_input").value.replace("\n" + fromIdx + " " + toIdx + " " + weight, "")
 
+        if(weighted_bool)
+            document.getElementById("console_input").value = document.getElementById("console_input").value.replace("\n" + fromIdx + " " + toIdx + " " + weight, "")
+        else
+            document.getElementById("console_input").value = document.getElementById("console_input").value.replace("\n" + fromIdx + " " + toIdx, "")
+      
 
-        var idx2 = -1;
-        for (var i = 0; i < adjList[fromIdx].length; i++) {
-            if (adjList[fromIdx][i][0] == toIdx) {
-                idx2 = i;
+        
+
+        for (var i = 0; i<connector_list.length ;i++){
+            if (connector_list[i]==conn){
+                connector_list.splice(i,1);
                 break;
             }
+                
         }
-
-        if (idx2 != -1) {
-            adjList[fromIdx].splice(idx2, 1);
-        }
-
+        removeFromAdjList(fromIdx, toIdx);
     }
 
 
 
-    var s = "<span> <strong>Edges</strong> </span> <br/> <br/> \
-            <table><tr><th>FROM</th><th>_TO_</th><th>WEIGHT</th></tr>";
+    // var s = "<span> <strong>Edges</strong> </span> <br/> <br/> \
+    //         <table><tr><th>FROM</th><th>_TO_</th><th>WEIGHT</th></tr>";
 
-    for (var j = 1; j < adjList.length; j++) {
-        for (var k = 0; k < adjList[j].length; k++) {
-            s = s + "<tr><td>   " + j + "</td>" + "<td>    " + adjList[j][k][0] + "</td><td>   " + adjList[j][k][1] + "</td></tr>";
-        }
-    }
-    var edgeDiv = document.getElementById("edgeList");
+    // for (var j = 1; j < adjList.length; j++) {
+    //     for (var k = 0; k < adjList[j].length; k++) {
+    //         s = s + "<tr><td>   " + j + "</td>" + "<td>    " + adjList[j][k][0] + "</td><td>   " + adjList[j][k][1] + "</td></tr>";
+    //     }
+    // }
+    // var edgeDiv = document.getElementById("edgeList");
     // edgeDiv.innerHTML = s;
     // edgeDiv.display = 'block';
 
@@ -156,11 +212,9 @@ function updateEdges(conn, remove) {
  * Update vertex weight, predecessor on graph render for current state.
  * Maintain frontier, completed vertex colorings. 
  */
-function updateGraphInfo() {
+function updateGraphInfo_Dijkstra() {
 
     var stillInQ = new Array(adjList.length).fill(false);
-
-
 
     //SETS THE NODE_INFO
     for (var i = 0; i < graph_states[current_state].length; i++) {
@@ -207,6 +261,7 @@ function updateGraphInfo() {
                 //SET EDGE COLOR
                 if (i != 0) {
                     conn = findConnectorByEndpoints(parentIdx, nodeIdx);
+                
                     conn.setType("considered");
 
                     weight = getEdgeWeight(parentIdx, nodeIdx);
@@ -214,7 +269,7 @@ function updateGraphInfo() {
                         type: "Label",
                         options: { label: weight, location: 0.5, cssClass: 'custom_overlay' }
                     });
-                    conn.addOverlay({ type: "PlainArrow", options: { width: 10, length: 25, location: 1 } });
+                    conn.addOverlay({ type: "PlainArrow", options: { width: 15, length: 25, location: 1 } });
                     window.j.repaintEverything();
                 }
 
@@ -233,7 +288,7 @@ function updateGraphInfo() {
                     type: "Label",
                     options: { label: weight, location: 0.5, cssClass: 'custom_overlay' }
                 });
-                conn.addOverlay({ type: "PlainArrow", options: { width: 10, length: 25, location: 1 } });
+                conn.addOverlay({ type: "PlainArrow", options: { width: 15, length: 25, location: 1 } });
                 window.j.repaintEverything();
             }
         }
@@ -268,30 +323,34 @@ jsPlumbBrowserUI.ready(function () {
     var instance = window.j = jsPlumbBrowserUI.newInstance({
         dragOptions: { cursor: 'pointer', zIndex: 2000 },
         endpointHoverStyle: { fill: "orange" },
-        hoverPaintStyle: { stroke: "orange" },
+        
+        paintStyle: { stroke: "rgb(65, 65, 100)", strokeWidth: 5 },
+        hoverPaintStyle: { stroke: "rgb(35, 35, 100)", strokeWidth:8 },
         anchors: ["Continuous", "Continuous"],
         connector: { type: "Bezier", options: { curviness: 23 } },
         dropOptions: { activeClass: "dragActive", hoverClass: "dropHover" },
         Endpoints: ["Blank", "Blank"],
-        container: canvas
+        container: canvas,
+        allowLoopback: false
     });
 
 
 
 
     //DIFFERENT CONNECTION COLORS
+
+    var conn_width = 5
     instance.registerConnectionTypes({
-        "unknown": {
-            paintStyle: { stroke: "rgb(65, 65, 100)", strokeWidth: 3 },
-            hoverPaintStyle: { stroke: "rgb(35, 35, 100)", strokeWidth: 4 }
-        },
+      
         "considered": {
-            paintStyle: { stroke: " rgb(204, 170, 0)", strokeWidth: 3 },
-            hoverPaintStyle: { strokeWidth: 4, stroke: " rgb(255, 220, 30)" },
+          
+            paintStyle: { stroke: " rgb(204, 170, 0)", strokeWidth: conn_width },
+            hoverPaintStyle: { strokeWidth: conn_width + 3, stroke: " rgb(255, 220, 30)" },
         },
         "final": {
-            paintStyle: { stroke: "rgb(17, 134, 13)", strokeWidth: 3 },
-            hoverPaintStyle: { strokeWidth: 4, stroke: "rgb(17, 200, 13)" },
+            
+            paintStyle: { stroke: "rgb(17, 134, 13)", strokeWidth: conn_width },
+            hoverPaintStyle: { strokeWidth: conn_width + 3, stroke: "rgb(17, 200, 13)" },
         }
 
 
@@ -318,17 +377,37 @@ jsPlumbBrowserUI.ready(function () {
 
 
     //WICHTIG: USED TO INSERT THE WEIGHT FROM INPUT WHEN ADDING EDGES (MAY ADD POPUPS LATER)
-    instance.bind("beforeDrop", function (params) {
-
-        fromIdx = parseInt(params.sourceId.slice(4));
-        toIdx = parseInt(params.targetId.slice(4));
+    instance.bind("beforeDrop", function (info, originalEvent) {
+       
+        
+        fromIdx = parseInt(info.connection.sourceId.slice(4));
+        toIdx = parseInt(info.connection.targetId.slice(4));
         weight = parseInt(document.getElementById('weightInput').value);
+       
 
+        if ( fromIdx==toIdx )
+            return false
 
-        if (EdgeAlreadyExists(fromIdx, toIdx))
+        
+       
+        if (weighted_bool && isNaN(weight)){
+            
+            alert("No Edge Weight given")
             return false;
+        }
+
+        if (EdgeAlreadyExists(fromIdx, toIdx) ){
+            alert("Edge already exists")
+            return false;
+        }
+
+        connector_list.push(info.connection);
+        console.log(info.connection);
 
         adjList[fromIdx].push([toIdx, weight]);
+        if (!directed_bool){
+           adjList[toIdx].push([fromIdx, weight]);
+        }
         return true;
 
     });
@@ -397,7 +476,17 @@ jsPlumbBrowserUI.ready(function () {
 
     var loadGraphBtn = document.getElementById("load_graph_btn");
     instance.on(loadGraphBtn, "click", function (e) {
+        
+        algo = document.getElementById("algo").value
+        if (algo.indexOf("undirected") == -1)
+            directed_bool = true
+        else
+            directed_bool = false
 
+        if (algo.indexOf("weighted") == -1)
+            weighted_bool = false
+        else
+            weighted_bool = true
 
         input = document.getElementById('console_input').value;
         lines = input.split('\n');
@@ -458,18 +547,22 @@ jsPlumbBrowserUI.ready(function () {
         for (var j = 1; j < lines.length; j++) {
 
 
-            fromIdx = lines[j].split(' ')[0];
-            toIdx = lines[j].split(' ')[1];
-            weight = lines[j].split(' ')[2];
+            fromIdx = parseInt(lines[j].split(' ')[0]);
+            toIdx = parseInt(lines[j].split(' ')[1]);
+            weight = parseFloat(lines[j].split(' ')[2]);
 
 
             adjList[fromIdx].push([toIdx, weight]);
+            if (!directed_bool){
+                adjList[toIdx].push([fromIdx, weight]);
+            }
 
             fromNode = document.getElementById('node' + fromIdx);
             toNode = document.getElementById('node' + toIdx);
 
             var conn = instance.connect({ source: fromNode, target: toNode, endpoint: "Blank" });
             connector_list.push(conn);
+            console.log(conn);
         }
 
         instance.repaintEverything();

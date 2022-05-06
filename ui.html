@@ -33,6 +33,18 @@
 					<option value="c++">C++</option>
 					<option value="java">Java</option>
 				</select>
+
+				<select name="algo" id="algo">
+					<option value="dijkstra_directed_weighted">Dijkstra (Directed + Weights)</option>
+					<option value="bfs_directed">BFS (Directed)</option>
+					<option value="bfs_undirected">BFS (Undirected)</option>
+					<option value="dfs_directed">DFS (Directed)</option>
+					<option value="dfs_undirected">DFS (Undirected)</option>
+					
+					<option value="prim_undirected_weighted">Prim (Undirected + Weights)</option>
+					<option value="krushkal_undirected_weighted">Krushkal (Undirected + Weights)</option>
+					
+				</select>
 				<button type="button" id="run-code" >Run Code</button>
 			</div>
 			<div class="code-area">
@@ -54,8 +66,7 @@
 2 3 9
 3 4 4
 4 3 6
-4 0 7
-0 4	</textarea>
+4 0 7</textarea>
 
 					<button id="load_graph_btn">Load Graph</button>
 					<button onclick="printAdjList()">AdjList Console Log</button>
@@ -73,7 +84,7 @@
 
 
 			<div class="graph-area">
-				<button onclick="updateGraphInfo()">STEP</button>
+				<button onclick="updateGraphInfo_Dijkstra()">STEP</button>
 				<button id='newNodeBtn'> add Button </button>
 				<div id="edgeList"> </div>
 				<p>
@@ -81,9 +92,10 @@
 					LOAD GRAPH<br>
 					PRESS STEP
 				</p>
+				
 
 				<div id='popup' class="popup">
-					<input type="text" id="weightInput" value="1">
+					<input type="text" id="weightInput">
 					<button id='confirmBtn'>New Edge Weight</button>
 				</div>
 
