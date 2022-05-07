@@ -5,7 +5,7 @@ const pyVersion = "3.10.0";
 const cppVersion = "10.2.0";
 const javaVersion = "15.0.2";
 
-default_code =`
+const default_code = `
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -529,11 +529,10 @@ class Dijkstra {
 
 
 }
-`
+`;
 
 const codeInputArea = document.querySelector(".code-input textarea");
 const codeOutputArea = document.querySelector(".code-output textarea");
-
 
 langSelection.addEventListener("change", (event) => {
 	let changedLang = event.target.value;
@@ -550,8 +549,6 @@ langSelection.addEventListener("change", (event) => {
 });
 
 runCodeButton.addEventListener("click", (event) => {
-
-	
 	const code = codeMirror.getValue();
 	const lang = document.getElementById("language").value;
 	let version;
@@ -589,12 +586,9 @@ runCodeButton.addEventListener("click", (event) => {
 				codeOutputArea.value = data.compile.stderr;
 			} else {
 				codeOutputArea.value = data.run.output;
-				
 
 				//ADDED THIS SAMEEN
-				graph_states = JSON.parse(codeOutputArea.value.split('\n')[0])
+				graph_states = JSON.parse(codeOutputArea.value.split("\n")[0]);
 			}
 		});
 });
-
-
