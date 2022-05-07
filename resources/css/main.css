@@ -72,16 +72,9 @@
     background-color: black;
 }
 
-.infected_node {
-    background: rgb(0, 0, 0);
-}
-
 .canvas {
     position: absolute;
-    left: 55%;
-    top: 5px;
-    width: 670px;
-    height: 700px;
+
     border: 3px solid black;
 }
 
